@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { getCanvasContext } from "$lib/context/canvasContext.svelte";
 	import generateRandomColor from "$lib/utils/generateRandomColor";
 
   interface Props {
@@ -37,9 +38,29 @@
     frictionStatic = 0.5,
     randomBackground = false
   }: Props = $props()
+
+  let element: HTMLElement
+  let mounted = false
+  const canvas = getCanvasContext()
+
+  $effect(() => {
+    // stop this shit from being a dependency of the $effect
+    // surely there's a better way to have the equivalent of onMount and onDestroy???
+    setTimeout(() => {
+      if(!mounted && canvas.state === 'active') {
+        canvas.addElement(element)
+        mounted = true
+      }
+    })
+
+    return () => {
+      if(mounted) canvas.removeElement(element)
+    }
+  })
 </script>
 
 <div
+  bind:this={element}
   data-shape="circle"
   data-density={density}
   data-friction={friction}

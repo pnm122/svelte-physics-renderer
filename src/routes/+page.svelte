@@ -1,8 +1,28 @@
-<script>
+<script lang="ts">
 	import Canvas from "$lib/components/Canvas.svelte";
 	import Circle from "$lib/components/Circle.svelte";
 	import Rectangle from "$lib/components/Rectangle.svelte";
 
+  let circles = $state<number[]>([])
+  let rectangles = $state<number[]>([])
+
+  let id = 0
+
+  function addCircle() {
+    circles.push(id++)
+  }
+
+  function removeCircle(value: number) {
+    circles = circles.filter(c => c !== value)
+  }
+
+  function addRectangle() {
+    rectangles.push(id++)
+  }
+
+  function removeRectangle(value: number) {
+    rectangles = rectangles.filter(c => c !== value)
+  }
 </script>
 <Canvas
   width='100%'
@@ -10,6 +30,8 @@
   gravity={{ scale: 0.0008 }}
   interactive
 >
+  <button onclick={addCircle}>Add Circle</button>
+  <button onclick={addRectangle}>Add Rectangle</button>
   <div class="container">
     <!-- <Rectangle
       radius={10}
@@ -24,18 +46,30 @@
       restitution={0.8}
       randomBackground>
     </Circle> -->
-    {#each new Array(24) as _}
+    {#each circles as value (value)}
       <Circle
-        class="ball"
+        class="shape circle"
         density={0.0000001}
         restitution={0.8}
         randomBackground>
-        Hello world!
+        <button onclick={() => removeCircle(value)}>
+          {value}
+        </button>
       </Circle>
     {/each}
-    <Rectangle density={0.01} style="width: 150px; height: 150px; position: absolute; left: 50%; bottom: 0;" randomBackground>
-      
-    </Rectangle>
+    {#each rectangles as value (value)}
+      <Rectangle
+        class="shape rectangle"
+        density={0.0000001}
+        restitution={0.8}
+        radius={12}
+        randomBackground>
+        <button onclick={() => removeRectangle(value)}>
+          {value}
+        </button>
+      </Rectangle>
+    {/each}
+
   </div>
 </Canvas>
 
@@ -50,13 +84,39 @@
     flex-wrap: wrap;
   }
 
-  :global(.ball) {
-    width: 64px;
-    pointer-events: none;
+  :global(.shape) {
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
     padding: 12px;
+    font-family: sans-serif;
+
+    button {
+      display: grid;
+      place-items: center;
+      width: 75%;
+      height: 75%;
+      outline: none;
+      border: none;
+      background-color: white;
+
+      &:hover {
+        background-color: #FF9C9C;
+      }
+    }
+  }
+
+  :global(.circle) {
+    width: 64px;
+
+    button {
+      border-radius: 999px;
+    }
+  }
+
+  :global(.rectangle) {
+    width: 128px;
+    height: 64px;
   }
 </style>
