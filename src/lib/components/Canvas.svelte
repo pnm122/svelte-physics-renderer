@@ -135,7 +135,9 @@
 
     updateRenderBounds()
     // TODO: Change this to a resize observer on the actual element
-    window.addEventListener('resize', updateRenderBounds);
+    // window.addEventListener('resize', updateRenderBounds);
+    const observer = new ResizeObserver(updateRenderBounds)
+    observer.observe(canvas)
 
     let animationFrame: number
 
@@ -148,7 +150,8 @@
     })();
 
     return () => {
-      window.removeEventListener('resize', updateRenderBounds)
+      // window.removeEventListener('resize', updateRenderBounds)
+      observer.disconnect()
       cancelAnimationFrame(animationFrame)
       Engine.clear(engine)
       Runner.stop(runner)
