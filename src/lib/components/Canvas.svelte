@@ -45,9 +45,10 @@
     Runner.run(runner, engine)
 
     function createBodiesFromCanvas(canvas: HTMLElement) {
-      const rectangles = Array.from(canvas.querySelectorAll('[data-rectangle]')) as HTMLElement[]
-      
-      return rectangles.map(el => {
+      const elements = Array.from(canvas.querySelectorAll('[data-shape]')) as HTMLElement[]
+      return elements.map(el => {
+        const shape = el.getAttribute('data-shape')
+
         const { x: elementX, y: elementY, width, height } = el.getBoundingClientRect()
         const { x: canvasX, y: canvasY } = canvas.getBoundingClientRect()
         const density = parseFloat(el.getAttribute('data-density')!),
@@ -55,16 +56,30 @@
               frictionAir = parseFloat(el.getAttribute('data-friction-air')!),
               isStatic = el.getAttribute('data-is-static')! === 'true',
               restitution = parseFloat(el.getAttribute('data-restitution')!),
-              frictionStatic = parseFloat(el.getAttribute('data-friction-static')!)
-
-        console.log(density, friction, frictionAir, isStatic, restitution, frictionStatic)
+              frictionStatic = parseFloat(el.getAttribute('data-friction-static')!),
+              radius = parseFloat(el.getAttribute('data-radius')!)
         
         return {
-          body: Bodies.rectangle(
+          body: shape === 'rectangle' ? Bodies.rectangle(
             (elementX - canvasX) + (width / 2),
             (elementY - canvasY) + (height / 2),
             width,
             height,
+            {
+              density,
+              friction,
+              frictionAir,
+              isStatic,
+              restitution,
+              frictionStatic,
+              chamfer: {
+                radius
+              }
+            }
+          ) : Bodies.circle(
+            (elementX - canvasX) + (width / 2),
+            (elementY - canvasY) + (height / 2),
+            width / 2,
             {
               density,
               friction,
@@ -131,7 +146,7 @@
         });
         Composite.add(world, mouseConstraint)
       }
-    }, 100)
+    }, 50)
 
     updateRenderBounds()
     // TODO: Change this to a resize observer on the actual element
