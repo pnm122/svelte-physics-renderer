@@ -1,5 +1,6 @@
 <script>
 	import Canvas from "$lib/components/Canvas.svelte";
+	import Rectangle from "$lib/components/Rectangle.svelte";
 
 </script>
 <Canvas
@@ -7,13 +8,12 @@
   height='500px'
   interactive
 >
-  <div class="container">
-    <div class="element">Hello</div>
-    <div class="element">World</div>
-  </div>
+  <Rectangle>
+    <button onclick={() => console.log('click')}>Click</button>
+  </Rectangle>
 </Canvas>
 
-<style lang="scss">
+<!-- <style lang="scss">
   .container {
     display: flex;
     align-items: center;
@@ -28,4 +28,4 @@
     justify-content: center;
     font-family: sans-serif;
   }
-</style>
+</style> -->

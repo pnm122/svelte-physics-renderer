@@ -8,10 +8,18 @@
     width: string
     /** Height of the canvas */
     height: string
-    /** Whether the canvas has walls on all sides. Defaults to true. */
+    /** Whether the canvas has walls on all sides.
+     * @default true
+    */
     bounded?: boolean
-    /** Whether the canvas can be interactive with using the mouse. Defaults to false. */
+    /** Whether the canvas can be interactive with using the mouse.
+     * @default false
+    */
     interactive?: boolean
+    /** Gravity within the canvas
+     * @default { x: 0, y: 1, scale: 0.001 }
+    */
+    gravity?: Partial<Matter.Gravity>
     children: () => any
   }
 
@@ -20,6 +28,7 @@
     height,
     bounded = true,
     interactive = false,
+    gravity = { x: 0, y: 1, scale: 0.001 },
     children
   }: Props = $props()
 
@@ -29,41 +38,41 @@
     const width = () => canvas.clientWidth
     const height = () => canvas.clientHeight
 
-    const engine = Engine.create(),
+    const engine = Engine.create({ gravity }),
           world = engine.world
- 
-    // const render = Render.create({
-    //   element: canvas,
-    //   engine,
-    //   options: {
-    //     width: width(),
-    //     height: height()
-    //   }
-    // })
-
-    // Render.run(render)
 
     const runner = Runner.create()
     Runner.run(runner, engine)
 
-    // add bodies
-    // const stack = Composites.stack(25, 20, 10, 5, 0, 0, function(x: number, y: number) {
-    //   return Bodies.rectangle(x, y, 25, 25)
-    // });
-    // Composite.add(world, stack);
-
-    function createBodiesFromHTML(elements: HTMLElement[]) {
-      return elements.map(el => {
+    function createBodiesFromCanvas(canvas: HTMLElement) {
+      const rectangles = Array.from(canvas.querySelectorAll('[data-rectangle]')) as HTMLElement[]
+      
+      return rectangles.map(el => {
         const { x: elementX, y: elementY, width, height } = el.getBoundingClientRect()
         const { x: canvasX, y: canvasY } = canvas.getBoundingClientRect()
-        console.log(elementX, elementY, canvasX, canvasY)
+        const density = parseFloat(el.getAttribute('data-density')!),
+              friction = parseFloat(el.getAttribute('data-friction')!),
+              frictionAir = parseFloat(el.getAttribute('data-friction-air')!),
+              isStatic = el.getAttribute('data-is-static')! === 'true',
+              restitution = parseFloat(el.getAttribute('data-restitution')!),
+              frictionStatic = parseFloat(el.getAttribute('data-friction-static')!)
 
+        console.log(density, friction, frictionAir, isStatic, restitution, frictionStatic)
+        
         return {
           body: Bodies.rectangle(
             (elementX - canvasX) + (width / 2),
             (elementY - canvasY) + (height / 2),
             width,
-            height
+            height,
+            {
+              density,
+              friction,
+              frictionAir,
+              isStatic,
+              restitution,
+              frictionStatic
+            }
           ),
           element: el,
           render() {
@@ -78,7 +87,7 @@
       })
     }
 
-    const bodies = createBodiesFromHTML(Array.from(canvas.querySelectorAll('.element')) as HTMLElement[])
+    const bodies = createBodiesFromCanvas(canvas)
     Composite.add(world, bodies.map(b => b.body))
 
     const wallSize = 50
@@ -94,23 +103,7 @@
     let mouse: Matter.Mouse
     let mouseConstraint: Matter.MouseConstraint
 
-    // fit the render viewport to the scene
-    // Render.lookAt(render, {
-    //     min: { x: 0, y: 0 },
-    //     max: { x: width(), y: height() }
-    // });
-
     const updateRenderBounds = debounce(() => {
-      // https://github.com/liabru/matter-js/issues/955
-      // const w = width(),
-      //       h = height()
-      // render.bounds.max.x = w;
-      // render.bounds.max.y = h;
-      // render.options.width = w;
-      // render.options.height = h;
-      // render.canvas.width = w;
-      // render.canvas.height = h;
-
       // Update dimensions of walls to match new render bounds
       if(bounded) {
         if(walls) {
@@ -137,8 +130,6 @@
           }
         });
         Composite.add(world, mouseConstraint)
-        // keep the mouse in sync with rendering
-        // render.mouse = mouse
       }
     }, 100)
 
@@ -159,10 +150,8 @@
     return () => {
       window.removeEventListener('resize', updateRenderBounds)
       cancelAnimationFrame(animationFrame)
-      // Render.stop(render)
       Engine.clear(engine)
-      // render.canvas.remove()
-      // render.textures = {}
+      Runner.stop(runner)
     }
   })
 </script>
