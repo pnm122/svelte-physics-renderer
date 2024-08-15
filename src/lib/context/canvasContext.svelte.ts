@@ -31,7 +31,7 @@ export class Canvas {
   resizeObserver: ResizeObserver | null
   animationFrame: number | null
 
-  state = $state<'inactive' | 'active'>('inactive')
+  state = $state<'running' | 'stopped' | 'paused'>('stopped')
   elements = $state<CanvasElement[]>([])
   canvasElement = $state<HTMLElement | null>()
 
@@ -72,7 +72,7 @@ export class Canvas {
   }
 
   private updateRenderBounds = debounce(() => {
-    if(this.state !== 'active') throw new Error('updateRenderBounds() called on inactive Canvas!')
+    if(this.state !== 'running') throw new Error('updateRenderBounds() called on inactive Canvas!')
       
     // Update dimensions of walls to match new render bounds
     if(this.bounded) {
@@ -118,7 +118,7 @@ export class Canvas {
   }
 
   addElement(el: HTMLElement) {
-    if(this.state !== 'active') throw new Error('addElement() called on inactive Canvas!')
+    if(this.state !== 'running') throw new Error('addElement() called on inactive Canvas!')
     
     const shape = el.getAttribute('data-shape')
 
@@ -181,7 +181,7 @@ export class Canvas {
   }
 
   removeElement(el: HTMLElement) {
-    if(this.state === 'inactive') throw new Error('removeElement(): Tried to remove an element while the Canvas was inactive!')
+    if(this.state === 'stopped') throw new Error('removeElement(): Tried to remove an element while the Canvas was stopped!')
 
     const elementToRemove = this.elements.find(element => element.element === el)
     if(!elementToRemove) throw new Error('removeElement(): Tried to remove an element that does not exist!')
@@ -192,7 +192,7 @@ export class Canvas {
 
   start() {
     if(!this.canvasElement) throw new Error('start() called without canvasElement!')
-    if(this.state === 'active') throw new Error('start() called on active Canvas!')
+    if(this.state === 'running') throw new Error('start() called on running Canvas!')
     console.log('start')
 
     this.engine = Engine.create({ gravity: this.gravity })
@@ -205,20 +205,34 @@ export class Canvas {
     this.updateRenderBounds()
     this.resizeObserver = new ResizeObserver(this.updateRenderBounds)
     this.resizeObserver.observe(this.canvasElement);
-    this.state = 'active'
+    this.state = 'running'
   }
 
   stop() {
-    if(this.state !== 'active') throw new Error('stop() called on inactive Canvas!')
+    if(this.state === 'stopped') throw new Error('stop() called on stopped Canvas!')
 
     console.log('stop')
     this.resizeObserver?.disconnect()
     if(this.animationFrame) {
       cancelAnimationFrame(this.animationFrame)
     }
-    this.state = 'inactive'
+    this.state = 'stopped'
     Engine.clear(this.engine!)
     Runner.stop(this.runner!)
+  }
+
+  pause() {
+    if(this.state !== 'running') throw new Error('pause(): Canvas must be running to pause!')
+    if(this.animationFrame) {
+      cancelAnimationFrame(this.animationFrame)
+    }
+    this.state = 'paused'
+  }
+
+  resume() {
+    if(this.state !== 'paused') throw new Error('resume(): Canvas must be puased to resume!')
+    this.state = 'running'
+    this.rerender()
   }
 }
 

@@ -48,7 +48,7 @@
     // stop this shit from being a dependency of the $effect
     // surely there's a better way to have the equivalent of onMount and onDestroy???
     setTimeout(() => {
-      if(!mounted && canvas.state === 'active') {
+      if(!mounted && canvas.state === 'running') {
         canvas.addElement(element)
         mounted = true
       }
@@ -79,7 +79,6 @@
 
 <style lang="scss">
   .rectangle {
-    // min-width: fit-content;
     border-radius: var(--radius);
   }
 </style>
