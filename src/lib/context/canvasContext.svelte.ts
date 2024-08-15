@@ -5,7 +5,10 @@ const { Bodies, Composite, Engine, Mouse, MouseConstraint, Runner, Render } = Ma
 
 export interface CanvasElement {
   body: () => Matter.Body
-  element: HTMLElement
+  element: {
+    reference: HTMLElement,
+    initialStyle: string
+  }
   render: () => void
 }
 
@@ -33,6 +36,10 @@ export class Canvas {
 
   state = $state<'running' | 'stopped' | 'paused'>('stopped')
   elements = $state<CanvasElement[]>([])
+  /** Elements added while the canvas isn't running.
+   *  Will be added when start() is called
+   */
+  queuedElements = $state<HTMLElement[]>([])
   canvasElement = $state<HTMLElement | null>()
 
   constructor({
@@ -117,9 +124,10 @@ export class Canvas {
     return this.world?.bodies.find(b => b.id === id)
   }
 
-  addElement(el: HTMLElement) {
-    if(this.state !== 'running') throw new Error('addElement() called on inactive Canvas!')
-    
+  /** Differs from addElement in that it adds directly to `elements` without checking the state of the Canvas.
+   * The state should be checked before calling this.
+   */
+  private innerAddElement(el: HTMLElement): CanvasElement {
     const shape = el.getAttribute('data-shape')
 
     const { x: elementX, y: elementY, width, height } = el.getBoundingClientRect()
@@ -164,39 +172,69 @@ export class Canvas {
 
     Composite.add(this.world!, body)
 
-    this.elements.push({
+    const element: CanvasElement = {
       // Can't reference body directly?
       // I guess this means Composite.add is creating a clone of the body?
       body: () => this.getElementById(body.id)!,
-      element: el,
+      element: {
+        reference: el,
+        initialStyle: el.style.cssText
+      },
       render() {
-        const { clientWidth: width, clientHeight: height } = this.element
+        const { clientWidth: width, clientHeight: height } = this.element.reference
         const { angle, position: { x, y } } = this.body()
-        this.element.style.position = 'absolute'
-        this.element.style.top = '0'
-        this.element.style.left = '0'
-        this.element.style.transform = `translate(${x - (width / 2)}px, ${y - (height / 2)}px) rotate(${angle}rad)`
+        this.element.reference.style.position = 'absolute'
+        this.element.reference.style.top = '0'
+        this.element.reference.style.left = '0'
+        this.element.reference.style.transform = `translate(${x - (width / 2)}px, ${y - (height / 2)}px) rotate(${angle}rad)`
       }
-    })
+    }
+
+    this.elements.push(element)
+    return element
   }
 
-  removeElement(el: HTMLElement) {
-    if(this.state === 'stopped') throw new Error('removeElement(): Tried to remove an element while the Canvas was stopped!')
+  /** Add an element to the Canvas, queueing for the next `start()` call if the Canvas isn't running.
+   * @return newly created CanvasElement if created, null if added to the queue
+  */
+  addElement(el: HTMLElement): CanvasElement | null {
+    if(this.state !== 'running') {
+      this.queuedElements.push(el)
+      return null
+    }
 
-    const elementToRemove = this.elements.find(element => element.element === el)
-    if(!elementToRemove) throw new Error('removeElement(): Tried to remove an element that does not exist!')
-    
-    this.elements = this.elements.filter(element => element.element !== elementToRemove.element)
-    Composite.remove(this.world!, this.getElementById(elementToRemove.body().id)!)
+    return this.innerAddElement(el)
   }
 
+  /** Remove an element from the Canvas, resetting any side effects of adding it to the Canvas.
+   * @return removed CanvasElement if Canvas is running and found, null otherwise
+  */
+  removeElement(el: HTMLElement): CanvasElement | null {
+    if(this.state === 'running') {
+      const elementToRemove = this.elements.find(element => element.element.reference === el)
+      if(!elementToRemove) return null
+      
+      this.elements = this.elements.filter(element => element !== elementToRemove)
+      Composite.remove(this.world!, this.getElementById(elementToRemove.body().id)!)
+      elementToRemove.element.reference.style.cssText = elementToRemove.element.initialStyle
+      return elementToRemove
+    } else {
+      const elementToRemove = this.queuedElements.find(element => element === el)
+      this.queuedElements = this.queuedElements.filter(element => element !== elementToRemove)
+      return null
+    }
+  }
+
+  /** Start running the Canvas renderer. */
   start() {
     if(!this.canvasElement) throw new Error('start() called without canvasElement!')
     if(this.state === 'running') throw new Error('start() called on running Canvas!')
-    console.log('start')
-
+      
     this.engine = Engine.create({ gravity: this.gravity })
     this.world = this.engine.world
+    
+    this.queuedElements.forEach(el => this.innerAddElement(el))
+    this.queuedElements = []
 
     this.rerender()
 
@@ -208,10 +246,10 @@ export class Canvas {
     this.state = 'running'
   }
 
+  /** Stop the Canvas renderer and clean up all side effects */
   stop() {
     if(this.state === 'stopped') throw new Error('stop() called on stopped Canvas!')
 
-    console.log('stop')
     this.resizeObserver?.disconnect()
     if(this.animationFrame) {
       cancelAnimationFrame(this.animationFrame)
@@ -219,8 +257,16 @@ export class Canvas {
     this.state = 'stopped'
     Engine.clear(this.engine!)
     Runner.stop(this.runner!)
+    for(const element of this.elements) {
+      element.element.reference.style.cssText = element.element.initialStyle
+    }
+
+    // Add all current elements to the queue so they will be added back if `start()` is called again
+    this.queuedElements = this.elements.map(el => el.element.reference)
+    this.elements = []
   }
 
+  /** Pause the rendering of the Canvas. */
   pause() {
     if(this.state !== 'running') throw new Error('pause(): Canvas must be running to pause!')
     if(this.animationFrame) {
@@ -229,6 +275,7 @@ export class Canvas {
     this.state = 'paused'
   }
 
+  /** Resume rendering of the Canvas after pausing. */
   resume() {
     if(this.state !== 'paused') throw new Error('resume(): Canvas must be puased to resume!')
     this.state = 'running'
