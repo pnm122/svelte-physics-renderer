@@ -78,7 +78,6 @@
 <style lang="scss">
   .circle {
     aspect-ratio: 1;
-    overflow: hidden;
     border-radius: 999px;
   }
 </style>

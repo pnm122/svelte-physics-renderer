@@ -79,8 +79,7 @@
 
 <style lang="scss">
   .rectangle {
-    min-width: fit-content;
-    overflow: hidden;
+    // min-width: fit-content;
     border-radius: var(--radius);
   }
 </style>
