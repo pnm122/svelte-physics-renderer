@@ -1,5 +1,10 @@
 <script lang="ts">
 	import type { RectangleOptions, CircleOptions, Shape } from "$lib/types/Shapes";
+	import Canvas from "./Canvas.svelte";
+  import MaterialSymbolsPlayArrow from '~icons/material-symbols/play-arrow'
+  import IcBaselinePause from '~icons/ic/baseline-pause'
+  import IcBaselineStop from '~icons/ic/baseline-stop'
+  import IcBaselineRefresh from '~icons/ic/baseline-refresh'
 
   interface Props {
     addCircle: (c: CircleOptions) => void
@@ -8,6 +13,7 @@
     toggleFocusedShape: (id: number) => void
     shapes: Shape[]
     focusedShape: number | null
+    canvas: Canvas | undefined
   }
 
   const {
@@ -16,7 +22,8 @@
     removeShape,
     toggleFocusedShape,
     shapes,
-    focusedShape
+    focusedShape,
+    canvas
   }: Props = $props()
 
   const defaultCircleOptions: CircleOptions = {
@@ -70,6 +77,45 @@
 </script>
 
 <div class="tools">
+  {#if canvas}
+  <div class="canvas">
+    <h2 class="canvas__title">Canvas</h2>
+    <div class="chip {canvas.context.state === 'paused' ? 'chip--warning' : canvas.context.state === 'running' ? 'chip--positive' : ''}">
+      {canvas.context.state}
+    </div>
+    <div class="canvas__buttons">
+      <button
+        class="button-positive"
+        aria-disabled={canvas.context.state !== 'stopped'}
+        onclick={() => canvas.context.start()}>
+        <MaterialSymbolsPlayArrow />
+        Start
+      </button>
+      <button
+        class="button-default"
+        aria-disabled={canvas.context.state !== 'paused'}
+        onclick={() => canvas.context.resume()}>
+        <IcBaselineRefresh />
+        Resume
+      </button>
+      <button
+        class="button-negative"
+        aria-disabled={canvas.context.state === 'stopped'}
+        onclick={() => canvas.context.stop()}>
+        <IcBaselineStop />
+        Stop
+      </button>
+      <button
+        class="button-warning"
+        aria-disabled={canvas.context.state !== 'running'}
+        onclick={() => canvas.context.pause()}>
+        <IcBaselinePause />
+        Pause
+      </button>
+    </div>
+  </div>
+  <hr>
+  {/if}
   <div class="add">
     <h2 class="add__title">Add shapes</h2>
     <form class="add-form" onsubmit={handleAddCircle}>
@@ -325,10 +371,22 @@
     }
   }
 
+  .canvas {
+    @include vertical-group;
+
+    &__title {
+      @include heading-2;
+    }
+
+    &__buttons {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+  }
+
   .add {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+    @include vertical-group;
 
     &__title {
       @include heading-2;
@@ -388,9 +446,7 @@
   }
 
   .shapes {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+    @include vertical-group;
 
     &__title {
       @include heading-2;

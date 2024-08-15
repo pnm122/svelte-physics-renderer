@@ -7,12 +7,16 @@
 
   let shapes = $state<Shape[]>([])
   let focusedShape = $state<number | null>(null)
-  let canvas: Canvas
+  let canvas = $state<Canvas>()
 
   let id = 0
+  let mounted = false
 
   $effect(() => {
-    canvas.context.start()
+    if(!mounted) {
+      canvas!.context.start()
+      mounted = true
+    }
   })
 
   function addCircle(options: CircleOptions) {
@@ -52,6 +56,7 @@
     {toggleFocusedShape}
     {shapes}
     {focusedShape}
+    {canvas}
   />
   <Canvas
     width='100%'
