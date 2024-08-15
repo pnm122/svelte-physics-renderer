@@ -38,14 +38,13 @@
   $effect(() => {
     if(canvas) {
       ctx.canvasElement = canvas
-      // I have no idea why this effect reruns infinitely but by doing this it untracks
-      // ctx.start() as a dependency and it stops an infinite loop from happening
-      setTimeout(() => ctx.start())
     }
     return () => {
-      ctx.stop()
+      if(ctx.state === 'running') ctx.stop()
     }
   })
+
+  export { ctx as context }
 </script>
 
 <div

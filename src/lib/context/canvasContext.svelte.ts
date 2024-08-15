@@ -22,24 +22,24 @@ export interface CanvasInitializer {
 export class Canvas {
   interactive: boolean
   bounded: boolean
-  gravity: Partial<Matter.Gravity>
+  private gravity: Partial<Matter.Gravity>
 
   engine: Matter.Engine | null
   world: Matter.World | null
   runner: Matter.Runner | null
-  walls: Matter.Body[] | null
+  private walls: Matter.Body[] | null
   mouse: Matter.Mouse | null
   mouseConstraint: Matter.MouseConstraint | null
 
-  resizeObserver: ResizeObserver | null
-  animationFrame: number | null
+  private resizeObserver: ResizeObserver | null
+  private animationFrame: number | null
 
   state = $state<'running' | 'stopped' | 'paused'>('stopped')
   elements = $state<CanvasElement[]>([])
   /** Elements added while the canvas isn't running.
    *  Will be added when start() is called
    */
-  queuedElements = $state<HTMLElement[]>([])
+  private queuedElements: HTMLElement[] = []
   canvasElement = $state<HTMLElement | null>()
 
   constructor({
@@ -228,7 +228,7 @@ export class Canvas {
   /** Start running the Canvas renderer. */
   start() {
     if(!this.canvasElement) throw new Error('start() called without canvasElement!')
-    if(this.state === 'running') throw new Error('start() called on running Canvas!')
+    if(this.state === 'running') return
       
     this.engine = Engine.create({ gravity: this.gravity })
     this.world = this.engine.world
@@ -248,7 +248,7 @@ export class Canvas {
 
   /** Stop the Canvas renderer and clean up all side effects */
   stop() {
-    if(this.state === 'stopped') throw new Error('stop() called on stopped Canvas!')
+    if(this.state === 'stopped') return
 
     this.resizeObserver?.disconnect()
     if(this.animationFrame) {
@@ -268,7 +268,7 @@ export class Canvas {
 
   /** Pause the rendering of the Canvas. */
   pause() {
-    if(this.state !== 'running') throw new Error('pause(): Canvas must be running to pause!')
+    if(this.state !== 'running') return
     if(this.animationFrame) {
       cancelAnimationFrame(this.animationFrame)
     }
@@ -277,7 +277,7 @@ export class Canvas {
 
   /** Resume rendering of the Canvas after pausing. */
   resume() {
-    if(this.state !== 'paused') throw new Error('resume(): Canvas must be puased to resume!')
+    if(this.state !== 'paused') return
     this.state = 'running'
     this.rerender()
   }
