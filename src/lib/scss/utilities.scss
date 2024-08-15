@@ -1,0 +1,36 @@
+@import 'variables';
+
+.button-default {
+  background: $button;
+  color: inherit;
+  border: none;
+  height: 32px;
+  font: inherit;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background 0.15s cubic-bezier(0.215, 0.610, 0.355, 1);
+
+  &:hover {
+    background: $button-hover;
+  }
+
+  &:active {
+    background: $button-active;
+  }
+}
+
+@mixin heading-1 {
+  font-size: 1.25rem;
+  font-weight: 500;
+}
+
+@mixin heading-2 {
+  font-size: 1.125rem;
+  font-weight: 500;
+}
+
+@mixin label {
+  color: $label;
+  font-size: 0.875rem;
+  width: 100px;
+}

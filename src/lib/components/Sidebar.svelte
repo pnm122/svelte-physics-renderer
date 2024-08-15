@@ -159,7 +159,7 @@
           onchange={e => updateCircleOptions('size', e.currentTarget.value)}
         >
       </div>
-      <button type="submit">Add Circle</button>
+      <button type="submit" class="button-default">Add Circle</button>
     </form>
     <form class="add-form" onsubmit={handleAddRectangle}>
       <div class="input-group">
@@ -274,7 +274,7 @@
           onchange={e => updateRectangleOptions('height', e.currentTarget.value)}
         >
       </div>
-      <button type="submit">Add Rectangle</button>
+      <button type="submit" class="button-default">Add Rectangle</button>
     </form>
   </div>
   <hr>
@@ -302,6 +302,7 @@
 
 <style lang="scss">
   @import '$lib/scss/variables';
+  @import '$lib/scss/utilities';
 
   .tools {
     background: $surface;
@@ -314,23 +315,7 @@
     scrollbar-width: thin;
 
     button[type="submit"] {
-      background: $button;
-      color: inherit;
-      border: none;
-      height: 32px;
       margin-top: 8px;
-      font: inherit;
-      font-size: 0.875rem;
-      cursor: pointer;
-      transition: background 0.15s cubic-bezier(0.215, 0.610, 0.355, 1);
-
-      &:hover {
-        background: $button-hover;
-      }
-
-      &:active {
-        background: $button-active;
-      }
     }
 
     hr {
@@ -346,8 +331,7 @@
     gap: 8px;
 
     &__title {
-      font-size: 1.125rem;
-      margin: 0;
+      @include heading-2;
     }
   }
 
@@ -368,16 +352,13 @@
       }
 
       label {
-        color: $label;
-        font-size: 0.875rem;
-        width: 100px;
+        @include label;
       }
 
       input {
         background: none;
         border: none;
         outline: none;
-        color: inherit;
         padding-right: 8px;
         height: 100%;
         font: inherit;
@@ -386,12 +367,7 @@
 
       button[role="switch"] {
         height: 100%;
-        background: none;
-        border: none;
-        font: inherit;
         font-size: 0.875rem;
-        cursor: pointer;
-        color: inherit;
         padding: 0;
         display: flex;
         align-items: center;
@@ -417,8 +393,7 @@
     gap: 8px;
 
     &__title {
-      font-size: 1.125rem;
-      margin: 0;
+      @include heading-2;
     }
 
     &__list {
@@ -437,12 +412,8 @@
         height: 32px;
         font-size: 0.875rem;
 
-        &:hover {
-          background-color: $focus;
-        }
-
         &--focused {
-          background-color: $focus;
+          background-color: $highlight;
 
           .shape-item__name {
             text-decoration: underline;
@@ -451,17 +422,17 @@
 
         &__name,
         &__delete {
-          background: none;
-          border: none;
           height: 100%;
-          cursor: pointer;
-          font: inherit;
           font-size: 0.875rem;
         }
 
         &__name {
           padding-left: 8px;
           color: inherit;
+
+          &:hover {
+            text-decoration: underline;
+          }
         }
 
         &__delete {
