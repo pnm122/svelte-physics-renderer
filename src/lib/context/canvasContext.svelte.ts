@@ -194,7 +194,7 @@ export class Canvas {
     return element
   }
 
-  /** Add an element to the Canvas, queueing for the next `start()` call if the Canvas isn't running.
+  /** Add an element to the Canvas, queueing for the next `start()` or `resume()` call if the Canvas isn't running.
    * @return newly created CanvasElement if created, null if added to the queue
   */
   addElement(el: HTMLElement): CanvasElement | null {
@@ -278,6 +278,10 @@ export class Canvas {
   /** Resume rendering of the Canvas after pausing. */
   resume() {
     if(this.state !== 'paused') return
+
+    this.queuedElements.forEach(el => this.innerAddElement(el))
+    this.queuedElements = []
+    
     this.state = 'running'
     this.rerender()
   }
