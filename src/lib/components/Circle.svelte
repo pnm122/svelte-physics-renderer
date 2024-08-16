@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getCanvasContext } from '$lib/context/canvasContext.svelte'
+	import { getCanvasContext, type CanvasElement } from '$lib/context/canvasContext.svelte'
 	import generateRandomColor from '$lib/utils/generateRandomColor'
 
 	interface Props {
@@ -44,15 +44,17 @@
 
 	let element: HTMLElement
 	let mounted = false
+  let canvasElement = $state<CanvasElement | null>(null)
+  let canvasElementPromise: Promise<CanvasElement | null>
 	const canvas = getCanvasContext()
 
 	$effect(() => {
 		// stop this shit from being a dependency of the $effect
 		// surely there's a better way to have the equivalent of onMount and onDestroy???
-		setTimeout(() => {
+		setTimeout(async () => {
 			if (!mounted) {
-				canvas.addElement(element)
 				mounted = true
+				canvas.addElement(element)
 			}
 		})
 
@@ -60,6 +62,32 @@
 			if (mounted) canvas.removeElement(element)
 		}
 	})
+
+  $effect(() => {
+    if(canvas.state === 'stopped') {
+      canvasElement = null
+    } else if(canvas.state === 'running') {
+      updateCanvasElement()
+    }
+  })
+
+  async function updateCanvasElement() {
+    canvasElement = await canvas.getElement(element)
+  }
+
+  export async function applyForce(force: { x: number, y: number }) {
+    if(canvasElementPromise) await canvasElementPromise
+    if(canvasElement) {
+      canvasElement.body().force = force
+    }
+  }
+
+  export async function getBody() {
+    if(canvasElementPromise) await canvasElementPromise
+    if(canvasElement) {
+      return canvasElement.body()
+    }
+  }
 </script>
 
 <div
