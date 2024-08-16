@@ -1,112 +1,112 @@
 @import 'variables';
 
 @mixin button {
-  color: inherit;
-  border: none;
-  height: 32px;
-  font: inherit;
-  font-size: 0.875rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  padding-inline: 8px;
-  transition:
-    background 0.15s cubic-bezier(0.215, 0.610, 0.355, 1),
-    filter 0.15s cubic-bezier(0.215, 0.610, 0.355, 1);
+	color: inherit;
+	border: none;
+	height: 32px;
+	font: inherit;
+	font-size: 0.875rem;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 4px;
+	padding-inline: 8px;
+	transition:
+		background 0.15s cubic-bezier(0.215, 0.61, 0.355, 1),
+		filter 0.15s cubic-bezier(0.215, 0.61, 0.355, 1);
 
-  &[aria-disabled="true"] {
-    background: $button;
-    opacity: 0.4;
-    cursor: default;
-  }
+	&[aria-disabled='true'] {
+		background: $button;
+		opacity: 0.4;
+		cursor: default;
+	}
 }
 
 .button-default {
-  background: $button;
-  @include button;
+	background: $button;
+	@include button;
 
-  &:not([aria-disabled="true"]):hover {
-    background: $button-hover;
-  }
+	&:not([aria-disabled='true']):hover {
+		background: $button-hover;
+	}
 
-  &:not([aria-disabled="true"]):active {
-    background: $button-active;
-  }
+	&:not([aria-disabled='true']):active {
+		background: $button-active;
+	}
 }
 
 .button-positive {
-  background: $positive-dark;
+	background: $positive-dark;
 }
 
 .button-warning {
-  background: $warning-dark;
+	background: $warning-dark;
 }
 
 .button-negative {
-  background: $negative-dark;
+	background: $negative-dark;
 }
 
 .button-positive,
 .button-warning,
 .button-negative {
-  @include button;
+	@include button;
 
-  &:not([aria-disabled="true"]):hover {
-    filter: brightness(1.15);
-  }
+	&:not([aria-disabled='true']):hover {
+		filter: brightness(1.15);
+	}
 
-  &:not([aria-disabled="true"]):active {
-    filter: brightness(1.3);
-  }
+	&:not([aria-disabled='true']):active {
+		filter: brightness(1.3);
+	}
 }
 
 .chip {
-  font-size: 0.75rem;
-  height: 20px;
-  padding: 0 10px;
-  border-radius: 999px;
-  background-color: $gray-400;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: fit-content;
+	font-size: 0.75rem;
+	height: 20px;
+	padding: 0 10px;
+	border-radius: 999px;
+	background-color: $gray-400;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: fit-content;
 
-  &--positive {
-    background-color: $positive;
-    color: black;
-  }
+	&--positive {
+		background-color: $positive;
+		color: black;
+	}
 
-  &--warning {
-    background-color: $warning;
-    color: black;
-  }
+	&--warning {
+		background-color: $warning;
+		color: black;
+	}
 }
 
 @mixin heading-1 {
-  font-size: 1.25rem;
-  font-weight: 500;
+	font-size: 1.25rem;
+	font-weight: 500;
 }
 
 @mixin heading-2 {
-  font-size: 1.125rem;
-  font-weight: 500;
+	font-size: 1.125rem;
+	font-weight: 500;
 }
 
 @mixin heading-3 {
-  font-size: 1rem;
-  font-weight: 500;
+	font-size: 1rem;
+	font-weight: 500;
 }
 
 @mixin label {
-  color: $label;
-  font-size: 0.875rem;
-  width: 100px;
+	color: $label;
+	font-size: 0.875rem;
+	width: 100px;
 }
 
 @mixin vertical-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
 }
