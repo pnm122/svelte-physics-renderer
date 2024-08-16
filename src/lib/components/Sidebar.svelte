@@ -5,6 +5,9 @@
   import IcBaselinePause from '~icons/ic/baseline-pause'
   import IcBaselineStop from '~icons/ic/baseline-stop'
   import IcBaselineRefresh from '~icons/ic/baseline-refresh'
+  import IcBaselinePlus from '~icons/ic/baseline-plus'
+  import IcBaselineCircle from '~icons/ic/baseline-circle'
+  import IcBaselineRectangle from '~icons/ic/baseline-rectangle'
 
   interface Props {
     addCircle: (c: CircleOptions) => void
@@ -121,6 +124,10 @@
   <div class="add">
     <h2 class="add__title">Add shapes</h2>
     <form class="add-form" onsubmit={handleAddCircle}>
+      <h3 class="add-form__title">
+        <IcBaselineCircle />
+        Circle
+      </h3>
       <div class="input-group">
         <label for="circle-density">Density</label>
         <input
@@ -207,9 +214,16 @@
           onchange={e => updateCircleOptions('size', e.currentTarget.value)}
         >
       </div>
-      <button type="submit" class="button-default">Add Circle</button>
+      <button type="submit" class="button-default">
+        <IcBaselinePlus />
+        Add Circle
+      </button>
     </form>
     <form class="add-form" onsubmit={handleAddRectangle}>
+      <h3 class="add-form__title">
+        <IcBaselineRectangle />
+        Rectangle
+      </h3>
       <div class="input-group">
         <label for="rect-density">Density</label>
         <input
@@ -322,7 +336,10 @@
           onchange={e => updateRectangleOptions('height', e.currentTarget.value)}
         >
       </div>
-      <button type="submit" class="button-default">Add Rectangle</button>
+      <button type="submit" class="button-default">
+        <IcBaselinePlus />
+        Add Rectangle
+      </button>
     </form>
   </div>
   <hr>
@@ -394,7 +411,9 @@
   }
 
   .add {
-    @include vertical-group;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
 
     &__title {
       @include heading-2;
@@ -404,6 +423,14 @@
   .add-form {
     display: flex;
     flex-direction: column;
+
+    &__title {
+      @include heading-3;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
 
     .input-group {
       display: grid;
