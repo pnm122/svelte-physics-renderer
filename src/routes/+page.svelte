@@ -132,20 +132,6 @@
     font-family: sans-serif;
     position: relative;
     pointer-events: none;
-
-    button {
-      display: grid;
-      place-items: center;
-      width: 75%;
-      height: 75%;
-      outline: none;
-      border: none;
-      background-color: white;
-
-      &:hover {
-        background-color: #FF9C9C;
-      }
-    }
   }
 
   .focus-ring {
