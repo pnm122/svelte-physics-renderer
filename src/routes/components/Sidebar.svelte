@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { RectangleOptions, CircleOptions, Shape } from "$lib/types/Shapes";
-	import Canvas from "./Canvas.svelte";
+	import Canvas from "../../lib/components/Canvas.svelte";
   import MaterialSymbolsPlayArrow from '~icons/material-symbols/play-arrow'
   import IcBaselinePause from '~icons/ic/baseline-pause'
   import IcBaselineStop from '~icons/ic/baseline-stop'
@@ -366,8 +366,8 @@
 </div>
 
 <style lang="scss">
-  @import '$lib/scss/variables';
-  @import '$lib/scss/utilities';
+  @import '$routes/scss/variables';
+  @import '$routes/scss/utilities';
 
   .tools {
     background: $surface;

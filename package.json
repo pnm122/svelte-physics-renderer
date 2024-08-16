@@ -1,10 +1,19 @@
 {
-	"name": "svelte-matterjs",
-	"version": "0.0.1",
-	"private": true,
+	"name": "svelte-physics-renderer",
+  "description": "A simple HTML-based physics renderer for Svelte, using MatterJS under the hood.",
+	"version": "0.1.0",
+  "license": "MIT",
+  "files": ["dist"],
+  "exports": {
+    ".": {
+			"types": "./dist/index.d.ts",
+			"svelte": "./dist/index.js"
+		}
+  },
+	"private": false,
 	"scripts": {
 		"dev": "vite dev",
-    "host": "vite dev --host",
+		"host": "vite dev --host",
 		"build": "vite build",
 		"preview": "vite preview",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
@@ -17,6 +26,7 @@
 		"@iconify-json/material-symbols": "^1.1.82",
 		"@sveltejs/adapter-auto": "^3.0.0",
 		"@sveltejs/kit": "^2.0.0",
+		"@sveltejs/package": "^2.3.4",
 		"@types/eslint": "^9.6.0",
 		"@types/lodash.debounce": "^4.0.9",
 		"@types/matter-js": "^0.19.7",
@@ -26,7 +36,7 @@
 		"globals": "^15.0.0",
 		"prettier": "^3.1.1",
 		"prettier-plugin-svelte": "^3.1.2",
-		"svelte": "^5.0.0-next.1",
+		"sass": "^1.77.8",
 		"svelte-check": "^3.6.0",
 		"typescript": "^5.0.0",
 		"typescript-eslint": "^8.0.0",
@@ -37,6 +47,6 @@
 	"dependencies": {
 		"lodash.debounce": "^4.0.8",
 		"matter-js": "^0.20.0",
-		"sass": "^1.77.8"
+    "svelte": "^5.0.0-next.1"
 	}
 }

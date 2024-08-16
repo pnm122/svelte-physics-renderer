@@ -75,7 +75,7 @@
   {/if}
 </div>
 
-<style lang="scss">
+<style>
   .circle {
     aspect-ratio: 1;
     border-radius: 999px;

@@ -1,38 +1,46 @@
-# create-svelte
+# svelte-physics-renderer
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/main/packages/create-svelte).
+A simple HTML-based physics renderer for Svelte, using MatterJS under the hood.
 
-## Creating a project
+## Example Usage
 
-If you're seeing this, you've probably already done this step. Congrats!
+```html
+<script lang="ts">
+  let canvas = $state<Canvas>();
 
-```bash
-# create a new project in the current directory
-npm create svelte@latest
+  let id = 0;
+  let mounted = false;
 
-# create a new project in my-app
-npm create svelte@latest my-app
+  $effect(() => {
+    if(!mounted) {
+      canvas!.context.start()
+      mounted = true
+    }
+  });
+</script>
+
+<Canvas
+  width='600px'
+  height='400px'
+  gravity={{ scale: 0.0005 }}
+  interactive
+  bind:this={canvas}
+>
+  <Circle
+    style="width: 128px;"
+    friction={0.001}
+    restitution={0.8}
+    randomBackground>
+    <!-- put any HTML you want here! -->
+    <span>Hello world!</span>
+  </Circle>
+  <Rectangle
+    style="width: 192px; height: 64px;"
+    friction={0.001}
+    restitution={0.8}
+    randomBackground>
+    <!-- put any HTML you want here! -->
+    <span>I'm a rectangle!</span>
+  </Rectangle>
+</Canvas>
 ```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.

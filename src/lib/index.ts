@@ -1,1 +1,5 @@
-// place files you want to import through the `$lib` alias in this folder.
+import Rectangle from "./components/Rectangle.svelte";
+import Circle from "./components/Circle.svelte";
+import Canvas from "./components/Canvas.svelte";
+
+export { Rectangle, Circle, Canvas }

@@ -77,7 +77,7 @@
   {/if}
 </div>
 
-<style lang="scss">
+<style>
   .rectangle {
     border-radius: var(--radius);
   }

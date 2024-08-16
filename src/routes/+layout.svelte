@@ -1,5 +1,5 @@
 <script lang="ts">
-  import '$lib/scss/index.scss';
+  import '$routes/scss/index.scss';
 </script>
 
 <slot></slot>

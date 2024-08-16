@@ -2,7 +2,7 @@
 	import Canvas from "$lib/components/Canvas.svelte";
 	import Circle from "$lib/components/Circle.svelte";
 	import Rectangle from "$lib/components/Rectangle.svelte";
-	import Sidebar from "$lib/components/Sidebar.svelte";
+	import Sidebar from "./components/Sidebar.svelte";
 	import type { CircleOptions, RectangleOptions, Shape } from "$lib/types/Shapes";
 
   let shapes = $state<Shape[]>([])
@@ -105,7 +105,7 @@
 </div>
 
 <style lang="scss">
-  @import '$lib/scss/variables';
+  @import '$routes/scss/variables';
 
   .main {
     display: grid;

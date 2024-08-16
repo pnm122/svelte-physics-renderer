@@ -54,7 +54,7 @@
   {@render children()}
 </div>
 
-<style lang="scss">
+<style>
   .canvas {
     overflow: hidden;
     position: relative;
