@@ -70,7 +70,7 @@
         {#if s.type === 'circle'}
           <Circle
             class="shape circle"
-            style="width: {s.size}px;"
+            size={s.size}
             density={s.density}
             friction={s.friction}
             frictionAir={s.frictionAir}

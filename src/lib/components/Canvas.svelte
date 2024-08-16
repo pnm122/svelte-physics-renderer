@@ -20,7 +20,7 @@
      * @default { x: 0, y: 1, scale: 0.001 }
     */
     gravity?: Partial<Matter.Gravity>
-    children: () => any
+    children?: () => any
   }
 
   const {
@@ -51,7 +51,9 @@
   bind:this={canvas}
   class="canvas"
   style="width: {width}; height: {height};">
-  {@render children()}
+  {#if children}
+    {@render children()}
+  {/if}
 </div>
 
 <style>

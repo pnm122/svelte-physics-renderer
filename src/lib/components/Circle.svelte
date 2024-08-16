@@ -24,6 +24,8 @@
      * @default false
      */
     randomBackground?: boolean
+    /** Size of the circle in pixels */
+    size?: number
   }
 
   const {
@@ -36,7 +38,8 @@
     isStatic = false,
     restitution = 0,
     frictionStatic = 0.5,
-    randomBackground = false
+    randomBackground = false,
+    size
   }: Props = $props()
 
   let element: HTMLElement
@@ -69,7 +72,7 @@
   data-restitution={restitution}
   data-friction-static={frictionStatic}
   class="circle {classname}"
-  style="{style} {randomBackground ? `background-color: ${generateRandomColor()}` : ''}">
+  style="{randomBackground ? `background-color: ${generateRandomColor()};` : ''}{size ? ` width: ${size}px; ` : ''}{style}">
   {#if children}
     {@render children()}
   {/if}
