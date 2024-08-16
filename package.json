@@ -1,15 +1,28 @@
 {
 	"name": "svelte-physics-renderer",
-  "description": "A simple HTML-based physics renderer for Svelte, using MatterJS under the hood.",
-	"version": "0.1.0",
-  "license": "MIT",
-  "files": ["dist"],
-  "exports": {
-    ".": {
+	"description": "A simple HTML-based physics renderer for Svelte, using MatterJS under the hood.",
+	"version": "0.1.1",
+	"license": "MIT",
+	"files": [
+		"dist"
+	],
+	"exports": {
+		".": {
 			"types": "./dist/index.d.ts",
 			"svelte": "./dist/index.js"
 		}
-  },
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/pnm122/svelte-physics-renderer"
+	},
+	"keywords": [
+		"svelte",
+		"physics",
+		"render",
+		"HTML",
+		"MatterJS"
+	],
 	"private": false,
 	"scripts": {
 		"dev": "vite dev",
@@ -47,6 +60,6 @@
 	"dependencies": {
 		"lodash.debounce": "^4.0.8",
 		"matter-js": "^0.20.0",
-    "svelte": "^5.0.0-next.1"
+		"svelte": "^5.0.0-next.1"
 	}
 }
