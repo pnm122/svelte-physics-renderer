@@ -79,9 +79,11 @@
 <div class="tools">
   {#if canvas}
   <div class="canvas">
-    <h2 class="canvas__title">Canvas</h2>
-    <div class="chip {canvas.context.state === 'paused' ? 'chip--warning' : canvas.context.state === 'running' ? 'chip--positive' : ''}">
-      {canvas.context.state}
+    <div class="canvas__title-group">
+      <h2 class="canvas__title">Canvas</h2>
+      <div class="chip {canvas.context.state === 'paused' ? 'chip--warning' : canvas.context.state === 'running' ? 'chip--positive' : ''}">
+        {canvas.context.state}
+      </div>
     </div>
     <div class="canvas__buttons">
       <button
@@ -373,6 +375,12 @@
 
   .canvas {
     @include vertical-group;
+
+    &__title-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
 
     &__title {
       @include heading-2;
