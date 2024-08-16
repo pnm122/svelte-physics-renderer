@@ -27,7 +27,7 @@ A simple HTML-based physics renderer for Svelte, using MatterJS under the hood.
   bind:this={canvas}
 >
   <Circle
-    style="width: 128px;"
+    size={64}
     friction={0.001}
     restitution={0.8}
     randomBackground>
