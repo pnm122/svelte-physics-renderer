@@ -5,7 +5,7 @@
 	import Sidebar from './components/Sidebar.svelte'
 	import type { CircleOptions, RectangleOptions, Shape } from '$lib/types/Shapes'
 
-	let shapes = $state<Shape[]>([])
+	let shapes = $state<{shape: Shape, element?: Circle | Rectangle}[]>([])
 	let focusedShape = $state<number | null>(null)
 	let canvas = $state<Canvas>()
 
@@ -21,22 +21,26 @@
 
 	function addCircle(options: CircleOptions) {
 		shapes.push({
-			...options,
-			id: id++,
-			type: 'circle'
-		})
+      shape: {
+        ...options,
+        id: id++,
+        type: 'circle'
+      }
+    })
 	}
 
 	function addRectangle(options: RectangleOptions) {
 		shapes.push({
-			...options,
-			id: id++,
-			type: 'rectangle'
-		})
+      shape: {
+        ...options,
+        id: id++,
+        type: 'rectangle'
+      }
+    })
 	}
 
 	function removeShape(id: number) {
-		shapes = shapes.filter((r) => r.id !== id)
+		shapes = shapes.filter((r) => r.shape.id !== id)
 	}
 
 	function toggleFocusedShape(id: number) {
@@ -60,37 +64,39 @@
 	/>
 	<Canvas width="100%" height="100%" gravity={{ scale: 0.0005 }} interactive bind:this={canvas}>
 		<div class="canvas-container">
-			{#each shapes as s (s.id)}
-				{#if s.type === 'circle'}
+			{#each shapes as s (s.shape.id)}
+				{#if s.shape.type === 'circle'}
 					<Circle
+            bind:this={s.element}
 						class="shape circle"
-						size={s.size}
-						density={s.density}
-						friction={s.friction}
-						frictionAir={s.frictionAir}
-						frictionStatic={s.frictionStatic}
-						restitution={s.restitution}
-						isStatic={s.isStatic}
+						size={s.shape.size}
+						density={s.shape.density}
+						friction={s.shape.friction}
+						frictionAir={s.shape.frictionAir}
+						frictionStatic={s.shape.frictionStatic}
+						restitution={s.shape.restitution}
+						isStatic={s.shape.isStatic}
 						randomBackground
 					>
-						{#if focusedShape === s.id}
+						{#if focusedShape === s.shape.id}
 							<div class="focus-ring"></div>
 						{/if}
 					</Circle>
 				{:else}
 					<Rectangle
+            bind:this={s.element}
 						class="shape rectangle"
-						style="width: {s.width}px; height: {s.height}px;"
-						density={s.density}
-						friction={s.friction}
-						frictionAir={s.frictionAir}
-						frictionStatic={s.frictionStatic}
-						restitution={s.restitution}
-						radius={s.radius}
-						isStatic={s.isStatic}
+						style="width: {s.shape.width}px; height: {s.shape.height}px;"
+						density={s.shape.density}
+						friction={s.shape.friction}
+						frictionAir={s.shape.frictionAir}
+						frictionStatic={s.shape.frictionStatic}
+						restitution={s.shape.restitution}
+						radius={s.shape.radius}
+						isStatic={s.shape.isStatic}
 						randomBackground
 					>
-						{#if focusedShape === s.id}
+						{#if focusedShape === s.shape.id}
 							<div class="focus-ring"></div>
 						{/if}
 					</Rectangle>
