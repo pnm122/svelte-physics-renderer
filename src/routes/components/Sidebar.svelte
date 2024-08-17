@@ -8,13 +8,16 @@
 	import IcBaselinePlus from '~icons/ic/baseline-plus'
 	import IcBaselineCircle from '~icons/ic/baseline-circle'
 	import IcBaselineRectangle from '~icons/ic/baseline-rectangle'
+  import IcBaselineArrowRight from '~icons/ic/baseline-arrow-right'
+	import Circle from '$lib/components/Circle.svelte'
+	import Rectangle from '$lib/components/Rectangle.svelte'
 
 	interface Props {
 		addCircle: (c: CircleOptions) => void
 		addRectangle: (r: RectangleOptions) => void
 		removeShape: (id: number) => void
 		toggleFocusedShape: (id: number) => void
-		shapes: Shape[]
+		shapes: {shape: Shape, element?: Circle | Rectangle}[]
 		focusedShape: number | null
 		canvas: Canvas | undefined
 	}
@@ -77,6 +80,11 @@
 		e.preventDefault()
 		addRectangle(addRectangleOptions)
 	}
+
+  function applyForce(e: SubmitEvent, element?: Circle | Rectangle) {
+    const { 'force-x': forceX, 'force-y': forceY } = Object.fromEntries(new FormData(e.target as HTMLFormElement))
+    element?.applyForce({ x: parseFloat(forceX.toString()), y: parseFloat(forceY.toString()) })
+  }
 </script>
 
 <div class="tools">
@@ -356,13 +364,36 @@
 	<div class="shapes">
 		<h2 class="shapes__title">Shapes</h2>
 		<ul class="shapes__list">
-			{#each shapes as shape}
-				<li class="shape-item{focusedShape === shape.id ? ' shape-item--focused' : ''}">
-					<button class="shape-item__name" onclick={() => toggleFocusedShape(shape.id)}>
-						{shape.type}
-						{shape.id}
-					</button>
-					<button class="shape-item__delete" onclick={() => removeShape(shape.id)}> Delete </button>
+			{#each shapes as s}
+				<li class="shape-item{focusedShape === s.shape.id ? ' shape-item--focused' : ''}">
+					<div class="shape-item__main">
+					  <button class="shape-item__name" onclick={() => toggleFocusedShape(s.shape.id)}>
+              <IcBaselineArrowRight class="shape-item__arrow" />
+  						<span>
+  						  {s.shape.type}
+    						{s.shape.id}
+  						</span>
+  					</button>
+  					<button class="shape-item__delete" onclick={() => removeShape(s.shape.id)}> Delete </button>
+					</div>
+          <div class="dropdown">
+            <form onsubmit={e => applyForce(e, s.element)}>
+              <h3 class="dropdown__title">Apply force</h3>
+              <div class="dropdown__ranges">
+                <div class="range">
+                  <label class="range__label" for="force-x-{s.shape.id}">x</label>
+                  <input class="range__input" type="range" name="force-x" id="force-x-{s.shape.id}" min="-1" max="1" step="0.05">
+                </div>
+                <div class="range">
+                  <label class="range__label" for="force-x-{s.shape.id}">y</label>
+                  <input class="range__input" type="range" name="force-y" id="force-y-{s.shape.id}" min="-1" max="1" step="0.05">
+                </div>
+              </div>
+              <button type="submit" class="button-default">
+                Apply
+              </button>
+            </form>
+          </div>
 				</li>
 			{/each}
 		</ul>
@@ -500,20 +531,25 @@
 			scrollbar-width: thin;
 
 			.shape-item {
-				display: flex;
-				align-items: center;
-				justify-content: space-between;
 				margin: 0;
-				height: 32px;
 				font-size: 0.875rem;
 
-				&--focused {
-					background-color: $highlight;
+        :global(.shape-item__arrow) {
+          transition: rotate 0.15s cubic-bezier(0.215, 0.61, 0.355, 1)
+        }
 
-					.shape-item__name {
-						text-decoration: underline;
-					}
-				}
+        &__main {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          height: 32px;
+        }
+
+        &__name {
+          display: flex;
+          align-items: center;
+          gap: 4px;
+        }
 
 				&__name,
 				&__delete {
@@ -537,6 +573,96 @@
 					&:hover {
 						text-decoration: underline;
 					}
+				}
+
+        .dropdown {
+          display: none;
+          flex-direction: column;
+          gap: 4px;
+          padding: 8px;
+
+          &__title {
+            @include heading-4;
+            margin-bottom: 4px;
+          }
+
+          .range {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+
+            &__label {
+              @include label;
+            }
+
+            &__input {
+              appearance: none;
+              -webkit-appearance: none;
+
+              @mixin track {
+                width: 100%;
+                height: 6px;
+                background: $gray-400;
+                border-radius: 999px;
+              }
+
+              @mixin thumb {
+                height: 18px;
+                width: 18px;
+                background: $gray-900;
+                border-radius: 999px;
+              }
+
+              // Must be separate since the browser will drop comma separated selectors if it doesn't understand one
+              &::-webkit-slider-runnable-track {
+                @include track;
+                appearance: none;
+                -webkit-appearance: none;
+              }
+
+              &::-moz-range-track {
+                @include track;
+              }
+
+              &::-ms-track {
+                @include track;
+              }
+
+              &::-webkit-slider-thumb {
+                @include thumb;
+                appearance: none;
+                -webkit-appearance: none;
+                margin-top: -6px;
+              }
+              &::-moz-range-thumb {
+                @include thumb;
+              }
+              &::-ms-thumb {
+                @include thumb;
+              }
+            }
+          }
+
+          [type="submit"] {
+            width: 100%;
+          }
+        }
+
+        &--focused {
+					outline: 4px solid $highlight;
+          outline-offset: -4px;
+
+          :global(.shape-item__arrow) {
+            rotate: 90deg;
+          }
+
+					.shape-item__name span {
+            text-decoration: underline;
+					}
+
+          .dropdown {
+            display: flex;
+          }
 				}
 			}
 		}
