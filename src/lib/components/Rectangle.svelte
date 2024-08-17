@@ -44,6 +44,7 @@
 	let mounted = false
   let canvasElement = $state<CanvasElement | null>(null)
   let canvasElementPromise: Promise<CanvasElement | null>
+  let body = $derived(canvasElement?.body() ?? null)
 	const canvas = getCanvasContext()
 
 	$effect(() => {
@@ -73,6 +74,7 @@
     canvasElement = await canvas.getElement(element)
   }
 
+  /** Apply a force on the element. */
   export async function applyForce(force: { x: number, y: number }) {
     if(canvasElementPromise) await canvasElementPromise
     if(canvasElement) {
@@ -80,11 +82,9 @@
     }
   }
 
-  export async function getBody() {
-    if(canvasElementPromise) await canvasElementPromise
-    if(canvasElement) {
-      return canvasElement.body()
-    }
+  /** Get the physics body of this element. Use this to directly manipulate the element. */
+  export function getBody() {
+    return body
   }
 </script>
 
