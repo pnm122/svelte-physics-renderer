@@ -82,6 +82,7 @@
 	}
 
   function applyForce(e: SubmitEvent, element?: Circle | Rectangle) {
+    e.preventDefault()
     const { 'force-x': forceX, 'force-y': forceY } = Object.fromEntries(new FormData(e.target as HTMLFormElement))
     element?.applyForce({ x: parseFloat(forceX.toString()), y: parseFloat(forceY.toString()) })
   }

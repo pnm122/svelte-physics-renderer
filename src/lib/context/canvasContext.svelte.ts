@@ -9,7 +9,7 @@ export interface CanvasElement {
 		reference: HTMLElement
 		initialStyle: string
 	}
-	render: () => void
+	render: (queue: (() => void)[]) => void
 }
 
 export interface CanvasInitializer {
@@ -43,6 +43,12 @@ export class Canvas {
 	private queuedElements: { element: HTMLElement, resolve?: ((el: CanvasElement | null) => void)[] }[] = []
 	canvasElement = $state<HTMLElement | null>()
 
+  /**
+   * Transformations of elements are computed during their `render()` calls, then the results are applied after all transformations have been calculated.
+   * This queue keeps track of all transformations to apply at the end of all `render()` calls during a rerender
+   */
+  private renderQueue: (() => void)[]
+
 	constructor({ element, interactive, bounded, gravity }: CanvasInitializer) {
 		this.canvasElement = element
 		this.interactive = interactive
@@ -60,6 +66,8 @@ export class Canvas {
 
 		this.resizeObserver = null
 		this.animationFrame = null
+
+    this.renderQueue = []
 	}
 
 	private createWalls() {
@@ -108,9 +116,9 @@ export class Canvas {
 
 	private rerender() {
 		if (!this.engine) throw new Error('rerender() called without engine!')
-		for (const element of this.elements) {
-			element.render()
-		}
+    this.elements.forEach(element => element.render(this.renderQueue))
+    this.renderQueue.forEach(fn => fn())
+    this.renderQueue = []
 
 		Engine.update(this.engine)
 		this.animationFrame = requestAnimationFrame(this.rerender.bind(this))
@@ -179,16 +187,18 @@ export class Canvas {
 				reference: el,
 				initialStyle: el.style.cssText
 			},
-			render() {
+			render(queue) {
 				const { clientWidth: width, clientHeight: height } = this.element.reference
 				const {
 					angle,
 					position: { x, y }
 				} = this.body()
-				this.element.reference.style.position = 'absolute'
-				this.element.reference.style.top = '0'
-				this.element.reference.style.left = '0'
-				this.element.reference.style.transform = `translate(${x - width / 2}px, ${y - height / 2}px) rotate(${angle}rad)`
+        queue.push(() => {
+          this.element.reference.style.transform = `translate(${x - width / 2}px, ${y - height / 2}px) rotate(${angle}rad)`
+          this.element.reference.style.position = 'absolute'
+          this.element.reference.style.top = '0'
+          this.element.reference.style.left = '0'
+        })
 			}
 		}
 
