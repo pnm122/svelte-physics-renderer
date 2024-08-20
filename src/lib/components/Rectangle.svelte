@@ -42,9 +42,9 @@
 
 	let element: HTMLElement
 	let mounted = false
-  let canvasElement = $state<CanvasElement | null>(null)
-  let canvasElementPromise: Promise<CanvasElement | null>
-  let body = $derived(canvasElement?.body() ?? null)
+	let canvasElement = $state<CanvasElement | null>(null)
+	let canvasElementPromise: Promise<CanvasElement | null>
+	let body = $derived(canvasElement?.body() ?? null)
 	const canvas = getCanvasContext()
 
 	$effect(() => {
@@ -62,30 +62,30 @@
 		}
 	})
 
-  $effect(() => {
-    if(canvas.state === 'stopped') {
-      canvasElement = null
-    } else if(canvas.state === 'running') {
-      updateCanvasElement()
-    }
-  })
+	$effect(() => {
+		if (canvas.state === 'stopped') {
+			canvasElement = null
+		} else if (canvas.state === 'running') {
+			updateCanvasElement()
+		}
+	})
 
-  async function updateCanvasElement() {
-    canvasElement = await canvas.getElement(element)
-  }
+	async function updateCanvasElement() {
+		canvasElement = await canvas.getElement(element)
+	}
 
-  /** Apply a force on the element. */
-  export async function applyForce(force: { x: number, y: number }) {
-    if(canvasElementPromise) await canvasElementPromise
-    if(canvasElement) {
-      canvasElement.body().force = force
-    }
-  }
+	/** Apply a force on the element. */
+	export async function applyForce(force: { x: number; y: number }) {
+		if (canvasElementPromise) await canvasElementPromise
+		if (canvasElement) {
+			canvasElement.body().force = force
+		}
+	}
 
-  /** Get the physics body of this element. Use this to directly manipulate the element. */
-  export function getBody() {
-    return body
-  }
+	/** Get the physics body of this element. Use this to directly manipulate the element. */
+	export function getBody() {
+		return body
+	}
 </script>
 
 <div

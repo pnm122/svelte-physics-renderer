@@ -38,9 +38,12 @@ export class Canvas {
 	elements = $state<CanvasElement[]>([])
 	/** Elements added while the canvas isn't running.
 	 *  Will be added when `start()`/`resume()` is called.
-   *  `resolve` is a list of promises to resolve when the element is added to the Canvas. Resolves with null if the element is removed from the Canvas before it can be added to the world
+	 *  `resolve` is a list of promises to resolve when the element is added to the Canvas. Resolves with null if the element is removed from the Canvas before it can be added to the world
 	 */
-	private queuedElements: { element: HTMLElement, resolve?: ((el: CanvasElement | null) => void)[] }[] = []
+	private queuedElements: {
+		element: HTMLElement
+		resolve?: ((el: CanvasElement | null) => void)[]
+	}[] = []
 	canvasElement = $state<HTMLElement | null>()
 
 	constructor({ element, interactive, bounded, gravity }: CanvasInitializer) {
@@ -200,8 +203,8 @@ export class Canvas {
 	 * @return CanvasElement when created, null if removed before added to the Canvas
 	 */
 	async addElement(el: HTMLElement): Promise<CanvasElement | null> {
-    let resolve: (el: CanvasElement | null) => void
-    const promise = new Promise<CanvasElement | null>(res => resolve = res)
+		let resolve: (el: CanvasElement | null) => void
+		const promise = new Promise<CanvasElement | null>((res) => (resolve = res))
 
 		if (this.state !== 'running') {
 			this.queuedElements.push({ element: el, resolve: [resolve!] })
@@ -225,35 +228,35 @@ export class Canvas {
 			return elementToRemove
 		} else {
 			const elementToRemove = this.queuedElements.find((element) => element.element === el)
-      // Resolve with null; this happens when the user adds an element and then removes it all while the Canvas isn't running
-      if(elementToRemove?.resolve) {
-        elementToRemove.resolve.forEach(res => res(null))
-      }
+			// Resolve with null; this happens when the user adds an element and then removes it all while the Canvas isn't running
+			if (elementToRemove?.resolve) {
+				elementToRemove.resolve.forEach((res) => res(null))
+			}
 			this.queuedElements = this.queuedElements.filter((element) => element !== elementToRemove)
 			return null
 		}
 	}
 
-  /** Get an element from the Canvas.
-   * @return CanvasElement if found, null otherwise. Waits until the element is added if the Canvas isn't running.
-   */
-  async getElement(el: HTMLElement): Promise<CanvasElement | null> {
-    if(this.state !== 'stopped') {
-      return this.elements.find((element) => element.element.reference === el) ?? null
-    } else {
-      const element = this.queuedElements.find((element) => element.element === el)
-      if(!element) return null
+	/** Get an element from the Canvas.
+	 * @return CanvasElement if found, null otherwise. Waits until the element is added if the Canvas isn't running.
+	 */
+	async getElement(el: HTMLElement): Promise<CanvasElement | null> {
+		if (this.state !== 'stopped') {
+			return this.elements.find((element) => element.element.reference === el) ?? null
+		} else {
+			const element = this.queuedElements.find((element) => element.element === el)
+			if (!element) return null
 
-      let resolve: (el: CanvasElement | null) => void
-      const promise = new Promise<CanvasElement | null>(res => resolve = res)
-      if(element.resolve) {
-        element.resolve.push(resolve!)
-      } else {
-        element.resolve = [resolve!]
-      }
-      return promise
-    }
-  }
+			let resolve: (el: CanvasElement | null) => void
+			const promise = new Promise<CanvasElement | null>((res) => (resolve = res))
+			if (element.resolve) {
+				element.resolve.push(resolve!)
+			} else {
+				element.resolve = [resolve!]
+			}
+			return promise
+		}
+	}
 
 	/** Start running the Canvas renderer. */
 	start() {
@@ -264,11 +267,11 @@ export class Canvas {
 		this.world = this.engine.world
 
 		this.queuedElements.forEach((el) => {
-      const element = this.innerAddElement(el.element)
-      if(el.resolve) {
-        el.resolve.forEach(res => res(element))
-      }
-    })
+			const element = this.innerAddElement(el.element)
+			if (el.resolve) {
+				el.resolve.forEach((res) => res(element))
+			}
+		})
 		this.queuedElements = []
 
 		this.rerender()
@@ -297,7 +300,7 @@ export class Canvas {
 		}
 
 		// Add all current elements to the queue so they will be added back if `start()` is called again
-		this.queuedElements = this.elements.map((el) => ({element: el.element.reference}))
+		this.queuedElements = this.elements.map((el) => ({ element: el.element.reference }))
 		this.elements = []
 	}
 
@@ -315,11 +318,11 @@ export class Canvas {
 		if (this.state !== 'paused') return
 
 		this.queuedElements.forEach((el) => {
-      const element = this.innerAddElement(el.element)
-      if(el.resolve) {
-        el.resolve.forEach(res => res(element))
-      }
-    })
+			const element = this.innerAddElement(el.element)
+			if (el.resolve) {
+				el.resolve.forEach((res) => res(element))
+			}
+		})
 		this.queuedElements = []
 
 		this.state = 'running'
