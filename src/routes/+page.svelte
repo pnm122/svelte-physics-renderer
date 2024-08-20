@@ -5,7 +5,7 @@
 	import Sidebar from './components/Sidebar.svelte'
 	import type { CircleOptions, RectangleOptions, Shape } from '$lib/types/Shapes'
 
-	let shapes = $state<{shape: Shape, element?: Circle | Rectangle}[]>([])
+	let shapes = $state<{ shape: Shape; element?: Circle | Rectangle }[]>([])
 	let focusedShape = $state<number | null>(null)
 	let canvas = $state<Canvas>()
 
@@ -27,22 +27,22 @@
 
 	function addCircle(options: CircleOptions) {
 		shapes.push({
-      shape: {
-        ...options,
-        id: id++,
-        type: 'circle'
-      }
-    })
+			shape: {
+				...options,
+				id: id++,
+				type: 'circle'
+			}
+		})
 	}
 
 	function addRectangle(options: RectangleOptions) {
 		shapes.push({
-      shape: {
-        ...options,
-        id: id++,
-        type: 'rectangle'
-      }
-    })
+			shape: {
+				...options,
+				id: id++,
+				type: 'rectangle'
+			}
+		})
 	}
 
 	function removeShape(id: number) {
@@ -84,7 +84,7 @@
 			{#each shapes as s (s.shape.id)}
 				{#if s.shape.type === 'circle'}
 					<Circle
-            bind:this={s.element}
+						bind:this={s.element}
 						class="shape circle"
 						size={s.shape.size}
 						density={s.shape.density}
@@ -101,7 +101,7 @@
 					</Circle>
 				{:else}
 					<Rectangle
-            bind:this={s.element}
+						bind:this={s.element}
 						class="shape rectangle"
 						style="width: {s.shape.width}px; height: {s.shape.height}px;"
 						density={s.shape.density}
