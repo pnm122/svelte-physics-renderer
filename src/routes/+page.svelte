@@ -19,6 +19,12 @@
 		}
 	})
 
+  $effect(() => {
+    return () => {
+      canvas!.context.stop()
+    }
+  })
+
 	function addCircle(options: CircleOptions) {
 		shapes.push({
       shape: {

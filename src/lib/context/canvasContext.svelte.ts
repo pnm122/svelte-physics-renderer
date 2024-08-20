@@ -305,9 +305,9 @@ export class Canvas {
 		this.state = 'stopped'
 		Engine.clear(this.engine!)
 		Runner.stop(this.runner!)
-		for (const element of this.elements) {
-			element.element.reference.style.cssText = element.element.initialStyle
-		}
+    this.elements.forEach(element => {
+      element.element.reference.style.cssText = element.element.initialStyle
+    })
 
 		// Add all current elements to the queue so they will be added back if `start()` is called again
 		this.queuedElements = this.elements.map((el) => ({element: el.element.reference}))
