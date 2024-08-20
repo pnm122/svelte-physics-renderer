@@ -19,6 +19,12 @@
 		}
 	})
 
+  $effect(() => {
+    return () => {
+      canvas!.context.stop()
+    }
+  })
+
 	function addCircle(options: CircleOptions) {
 		shapes.push({
 			shape: {
@@ -63,7 +69,18 @@
 		{canvas}
 	/>
 	<Canvas width="100%" height="100%" gravity={{ scale: 0.0005 }} interactive bind:this={canvas}>
-		<div class="canvas-container">
+		<div class="test">
+      <Rectangle class="test-box">
+        Test box
+      </Rectangle>
+      <Rectangle class="test-box">
+        Test box 2
+      </Rectangle>
+      <Rectangle class="test-box">
+        Test box 3
+      </Rectangle>
+    </div>
+    <div class="canvas-container">
 			{#each shapes as s (s.shape.id)}
 				{#if s.shape.type === 'circle'}
 					<Circle
@@ -108,6 +125,12 @@
 
 <style lang="scss">
 	@import '$routes/scss/variables';
+
+  .test {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
 
 	.main {
 		display: grid;

@@ -11,10 +11,16 @@ A simple HTML-based physics renderer for Svelte, using MatterJS under the hood.
   let id = 0;
   let mounted = false;
 
+	$effect(() => {
+		if (!mounted) {
+			canvas!.context.start();
+			mounted = true;
+		}
+	});
+
   $effect(() => {
-    if(!mounted) {
-      canvas!.context.start()
-      mounted = true
+    return () => {
+      canvas!.context.stop();
     }
   });
 </script>

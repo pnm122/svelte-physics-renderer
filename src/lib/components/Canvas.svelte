@@ -39,9 +39,6 @@
 		if (canvas) {
 			ctx.canvasElement = canvas
 		}
-		return () => {
-			if (ctx.state === 'running') ctx.stop()
-		}
 	})
 
 	export { ctx as context }
