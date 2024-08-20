@@ -1,7 +1,7 @@
 {
 	"name": "svelte-physics-renderer",
 	"description": "A simple HTML-based physics renderer for Svelte, using MatterJS under the hood.",
-	"version": "0.1.4",
+	"version": "0.1.5",
 	"license": "MIT",
 	"files": [
 		"dist"
