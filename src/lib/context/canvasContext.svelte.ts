@@ -198,6 +198,8 @@ export class Canvas {
           this.element.reference.style.position = 'absolute'
           this.element.reference.style.top = '0'
           this.element.reference.style.left = '0'
+          this.element.reference.style.width = `${width}px`
+          this.element.reference.style.height = `${height}px`
         })
 			}
 		}
@@ -296,6 +298,7 @@ export class Canvas {
 		if (this.state === 'stopped') return
 
 		this.resizeObserver?.disconnect()
+    // Last animation frame will clear renderQueue, so it doesn't need to be cleared after this
 		if (this.animationFrame) {
 			cancelAnimationFrame(this.animationFrame)
 		}

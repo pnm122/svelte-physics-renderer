@@ -64,13 +64,13 @@
 	/>
 	<Canvas width="100%" height="100%" gravity={{ scale: 0.0005 }} interactive bind:this={canvas}>
 		<div class="test">
-      <Rectangle class="test-box" isStatic>
+      <Rectangle class="test-box">
         Test box
       </Rectangle>
-      <Rectangle class="test-box" isStatic>
+      <Rectangle class="test-box">
         Test box 2
       </Rectangle>
-      <Rectangle class="test-box" isStatic>
+      <Rectangle class="test-box">
         Test box 3
       </Rectangle>
     </div>
