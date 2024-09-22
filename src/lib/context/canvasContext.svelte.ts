@@ -114,6 +114,31 @@ export class Canvas {
 				}
 			})
 			Composite.add(this.world!, this.mouseConstraint)
+
+      // Update event listeners that prevent default scrolling behavior
+      // This should allow scrolling while also maintaining the interactive behavior
+
+      // For some reason this isn't typed correctly, so I'm retyping to any to avoid the errors
+      const mouse = this.mouseConstraint.mouse as any
+      this.mouseConstraint.mouse.element.removeEventListener('wheel', mouse.mousewheel);
+      this.mouseConstraint.mouse.element.removeEventListener('touchstart', mouse.mousedown);
+      this.mouseConstraint.mouse.element.removeEventListener('touchmove', mouse.mousemove);
+      this.mouseConstraint.mouse.element.removeEventListener('touchend', mouse.mouseup);
+
+      // Causes errors in the console because mouse.mousewheel tries to preventDefault, which isn't allowed with passive event listeners
+      // Doesn't seem like this is necessary to fix scrolling issues from my testing, so I'm leaving it commented for now
+      // this.mouseConstraint.mouse.element.addEventListener('wheel', mouse.mousewheel, { passive: true });
+      this.mouseConstraint.mouse.element.addEventListener('touchstart', mouse.mousedown, { passive: true });
+      this.mouseConstraint.mouse.element.addEventListener('touchmove', (e) => {
+        if (this.mouseConstraint!.body) {
+          mouse.mousemove(e);
+        }
+      });
+      this.mouseConstraint.mouse.element.addEventListener('touchend', (e) => {
+        if (this.mouseConstraint!.body) {
+          mouse.mouseup(e);
+        }
+      });
 		}
 	}, 50)
 
